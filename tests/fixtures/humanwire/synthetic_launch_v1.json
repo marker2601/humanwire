@@ -1,0 +1,605 @@
+{
+  "scenario": {
+    "schema_version": "humanwire.synthetic/v1",
+    "scenario_id": "launch-v1",
+    "identity_seed": 0,
+    "identity_generator_version": "humanwire.synthetic-identities/v1",
+    "personas": [
+      {
+        "persona_id": "synthetic-manager",
+        "display_name": "Inez Ward",
+        "role": "Simulation manager",
+        "email": "inez-ward@example.test",
+        "channels": [
+          "email"
+        ],
+        "allowed_intents": [
+          "availability"
+        ],
+        "private_fact_digests": []
+      },
+      {
+        "persona_id": "inform",
+        "display_name": "Anika Rao",
+        "role": "Delivery owner",
+        "email": "anika-rao@example.test",
+        "channels": [
+          "email"
+        ],
+        "allowed_intents": [
+          "silence"
+        ],
+        "private_fact_digests": []
+      },
+      {
+        "persona_id": "ack",
+        "display_name": "Nora Jensen",
+        "role": "Executive owner",
+        "email": "nora-jensen@example.test",
+        "channels": [
+          "email"
+        ],
+        "allowed_intents": [
+          "acknowledge",
+          "accept_proposal"
+        ],
+        "private_fact_digests": []
+      },
+      {
+        "persona_id": "quick-a",
+        "display_name": "Nadia Patel",
+        "role": "Program owner",
+        "email": "nadia-patel@example.test",
+        "channels": [
+          "email"
+        ],
+        "allowed_intents": [
+          "acknowledge",
+          "answer",
+          "confirm_evidence",
+          "accept_proposal"
+        ],
+        "private_fact_digests": []
+      },
+      {
+        "persona_id": "quick-b",
+        "display_name": "Talia Green",
+        "role": "Operations owner",
+        "email": "talia-green@example.test",
+        "channels": [
+          "email"
+        ],
+        "allowed_intents": [
+          "acknowledge",
+          "answer",
+          "confirm_evidence",
+          "accept_proposal"
+        ],
+        "private_fact_digests": []
+      },
+      {
+        "persona_id": "structured",
+        "display_name": "Avery Chen",
+        "role": "People owner",
+        "email": "avery-chen@example.test",
+        "channels": [
+          "email",
+          "telegram"
+        ],
+        "allowed_intents": [
+          "acknowledge",
+          "interview_response",
+          "confirm_evidence",
+          "silence",
+          "change_proposal",
+          "availability"
+        ],
+        "private_fact_digests": [
+          "80399b2136673ca66ff3614f8446333ad7afd54b0e9bb745029545c653071adf"
+        ]
+      },
+      {
+        "persona_id": "approval",
+        "display_name": "Marco Silva",
+        "role": "Approval owner",
+        "email": "marco-silva@example.test",
+        "channels": [
+          "email"
+        ],
+        "allowed_intents": [
+          "approve",
+          "accept_proposal"
+        ],
+        "private_fact_digests": []
+      },
+      {
+        "persona_id": "availability",
+        "display_name": "Priya Shah",
+        "role": "Scheduling owner",
+        "email": "priya-shah@example.test",
+        "channels": [
+          "email"
+        ],
+        "allowed_intents": [
+          "availability",
+          "accept_proposal"
+        ],
+        "private_fact_digests": []
+      },
+      {
+        "persona_id": "approval-change",
+        "display_name": "Jonah Reed",
+        "role": "Independent change authority",
+        "email": "jonah-reed@example.test",
+        "channels": [
+          "email"
+        ],
+        "allowed_intents": [
+          "change"
+        ],
+        "private_fact_digests": []
+      }
+    ],
+    "provenance": {
+      "proof_class": "synthetic_multi_persona",
+      "actor_type": "simulated_persona",
+      "identity_source": "synthetic_fixture",
+      "transport": "fake_caspian",
+      "human_attested": false,
+      "live_provider_verified": false
+    }
+  },
+  "outbound_digests": {
+    "outbound-1": "b5440ef8ae4e14a72b377766e1090b364e02a90f94f28ee1270b5882acc36f40",
+    "outbound-2": "457e339d3a84e5317f7ac221c5b9ffc31230aa2cac81b12823024cc8a9e478f5",
+    "outbound-3": "9c9c481215017b2c1ed25ad554fbe27565829b17b8929ea7452a37b0bf546027",
+    "outbound-4": "9c9c481215017b2c1ed25ad554fbe27565829b17b8929ea7452a37b0bf546027",
+    "outbound-5": "321bf174b0d450c3cef7eb2d47b4ca3d1a738d6ff77f9a86a5c8804576ed3748",
+    "outbound-6": "d31c0f7413b2c0d19e632fba5fd2055da80b21dd1aac55a2c40bef16abd917a2",
+    "outbound-7": "c6ca2ee7151329ee7c43dda92585152d665e8bf2621f77c4f234fa11af1dac56",
+    "outbound-8": "307681e6f27639ca27bce1975b952a8787d6db73f40d7a048128b6b312b493c9",
+    "outbound-9": "307681e6f27639ca27bce1975b952a8787d6db73f40d7a048128b6b312b493c9",
+    "outbound-10": "a974a5d2cb5dc39ef44b170a31af14c99a7294c6f24ff159b625887774328e45",
+    "outbound-11": "a974a5d2cb5dc39ef44b170a31af14c99a7294c6f24ff159b625887774328e45",
+    "outbound-12": "e8d87adc56177b8eee06a38c67be823c5bc8f3193dacbafe6671dbcd517305d8",
+    "outbound-13": "974c6b6af9dbbf2d59bbb15bf301c7bddd267808f0e8a400fb2fd87ff972581e",
+    "outbound-14": "30945090ad472587ee1bbf98f00bf7f9ed341a12682cdd5bb62400f596d519ff",
+    "outbound-15": "f557653e8150a26ce665b96fd50b9e495727d7a72eefffe4f756c4ae70b8aee7",
+    "outbound-16": "5b1032e7ff4b463618aaab6175cd1c796c00073666327eb5bafb111dc847e1db",
+    "outbound-17": "a974a5d2cb5dc39ef44b170a31af14c99a7294c6f24ff159b625887774328e45",
+    "outbound-18": "204fdc31d1c58a0c1f0a1dc5cc7b5c11b488cde8edeb948214dc353088b41cde",
+    "outbound-19": "204fdc31d1c58a0c1f0a1dc5cc7b5c11b488cde8edeb948214dc353088b41cde",
+    "outbound-20": "204fdc31d1c58a0c1f0a1dc5cc7b5c11b488cde8edeb948214dc353088b41cde",
+    "outbound-21": "204fdc31d1c58a0c1f0a1dc5cc7b5c11b488cde8edeb948214dc353088b41cde",
+    "outbound-22": "204fdc31d1c58a0c1f0a1dc5cc7b5c11b488cde8edeb948214dc353088b41cde",
+    "outbound-23": "204fdc31d1c58a0c1f0a1dc5cc7b5c11b488cde8edeb948214dc353088b41cde",
+    "outbound-24": "a32aab8699b64665cba858b401d1c1a59c2d418a99328d4bfa9074555432b007",
+    "outbound-25": "a32aab8699b64665cba858b401d1c1a59c2d418a99328d4bfa9074555432b007",
+    "outbound-26": "a32aab8699b64665cba858b401d1c1a59c2d418a99328d4bfa9074555432b007",
+    "outbound-27": "a32aab8699b64665cba858b401d1c1a59c2d418a99328d4bfa9074555432b007",
+    "outbound-28": "a32aab8699b64665cba858b401d1c1a59c2d418a99328d4bfa9074555432b007",
+    "outbound-29": "a32aab8699b64665cba858b401d1c1a59c2d418a99328d4bfa9074555432b007",
+    "outbound-30": "c5243e689b7a36c03b43df4fb67cd70297cf07f19587b0dc7dc644534b9d1843",
+    "outbound-31": "c5243e689b7a36c03b43df4fb67cd70297cf07f19587b0dc7dc644534b9d1843",
+    "outbound-32": "d31c0f7413b2c0d19e632fba5fd2055da80b21dd1aac55a2c40bef16abd917a2"
+  },
+  "actions": [
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "inform-1",
+      "persona_id": "inform",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:01Z",
+      "local_sequence": 1,
+      "trigger_id": "outbound-1",
+      "trigger_digest": "b5440ef8ae4e14a72b377766e1090b364e02a90f94f28ee1270b5882acc36f40",
+      "intent": "silence",
+      "content": "synthetic_silence",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "ack-1",
+      "persona_id": "ack",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:01Z",
+      "local_sequence": 1,
+      "trigger_id": "outbound-2",
+      "trigger_digest": "457e339d3a84e5317f7ac221c5b9ffc31230aa2cac81b12823024cc8a9e478f5",
+      "intent": "acknowledge",
+      "content": "Acknowledged.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "quick-a-1",
+      "persona_id": "quick-a",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:01Z",
+      "local_sequence": 1,
+      "trigger_id": "outbound-3",
+      "trigger_digest": "9c9c481215017b2c1ed25ad554fbe27565829b17b8929ea7452a37b0bf546027",
+      "intent": "acknowledge",
+      "content": "Acknowledged.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "quick-b-1",
+      "persona_id": "quick-b",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:01Z",
+      "local_sequence": 1,
+      "trigger_id": "outbound-4",
+      "trigger_digest": "9c9c481215017b2c1ed25ad554fbe27565829b17b8929ea7452a37b0bf546027",
+      "intent": "acknowledge",
+      "content": "Acknowledged.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "structured-1",
+      "persona_id": "structured",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:01Z",
+      "local_sequence": 1,
+      "trigger_id": "outbound-5",
+      "trigger_digest": "321bf174b0d450c3cef7eb2d47b4ca3d1a738d6ff77f9a86a5c8804576ed3748",
+      "intent": "silence",
+      "content": "synthetic_silence",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "approval-1",
+      "persona_id": "approval",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:01Z",
+      "local_sequence": 1,
+      "trigger_id": "outbound-6",
+      "trigger_digest": "d31c0f7413b2c0d19e632fba5fd2055da80b21dd1aac55a2c40bef16abd917a2",
+      "intent": "approve",
+      "content": "Approved.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "availability-1",
+      "persona_id": "availability",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:01Z",
+      "local_sequence": 1,
+      "trigger_id": "outbound-7",
+      "trigger_digest": "c6ca2ee7151329ee7c43dda92585152d665e8bf2621f77c4f234fa11af1dac56",
+      "intent": "availability",
+      "content": "2026-08-13T15:00:00+00:00/2026-08-13T16:00:00+00:00",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "quick-a-2",
+      "persona_id": "quick-a",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:02Z",
+      "local_sequence": 2,
+      "trigger_id": "outbound-8",
+      "trigger_digest": "307681e6f27639ca27bce1975b952a8787d6db73f40d7a048128b6b312b493c9",
+      "intent": "answer",
+      "content": "Launch date is 2026-09-01.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "quick-b-2",
+      "persona_id": "quick-b",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:02Z",
+      "local_sequence": 2,
+      "trigger_id": "outbound-9",
+      "trigger_digest": "307681e6f27639ca27bce1975b952a8787d6db73f40d7a048128b6b312b493c9",
+      "intent": "answer",
+      "content": "Launch date is 2026-09-01.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "quick-a-3",
+      "persona_id": "quick-a",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:03Z",
+      "local_sequence": 3,
+      "trigger_id": "outbound-10",
+      "trigger_digest": "a974a5d2cb5dc39ef44b170a31af14c99a7294c6f24ff159b625887774328e45",
+      "intent": "confirm_evidence",
+      "content": "Confirmed.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "quick-b-3",
+      "persona_id": "quick-b",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:03Z",
+      "local_sequence": 3,
+      "trigger_id": "outbound-11",
+      "trigger_digest": "a974a5d2cb5dc39ef44b170a31af14c99a7294c6f24ff159b625887774328e45",
+      "intent": "confirm_evidence",
+      "content": "Confirmed.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "structured-2",
+      "persona_id": "structured",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:11Z",
+      "local_sequence": 2,
+      "trigger_id": "outbound-12",
+      "trigger_digest": "e8d87adc56177b8eee06a38c67be823c5bc8f3193dacbafe6671dbcd517305d8",
+      "intent": "silence",
+      "content": "synthetic_silence",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "structured-3",
+      "persona_id": "structured",
+      "channel": "telegram",
+      "timestamp": "2026-08-13T12:00:21Z",
+      "local_sequence": 3,
+      "trigger_id": "outbound-13",
+      "trigger_digest": "974c6b6af9dbbf2d59bbb15bf301c7bddd267808f0e8a400fb2fd87ff972581e",
+      "intent": "acknowledge",
+      "content": "Acknowledged.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "structured-4",
+      "persona_id": "structured",
+      "channel": "telegram",
+      "timestamp": "2026-08-13T12:00:22Z",
+      "local_sequence": 4,
+      "trigger_id": "outbound-14",
+      "trigger_digest": "30945090ad472587ee1bbf98f00bf7f9ed341a12682cdd5bb62400f596d519ff",
+      "intent": "interview_response",
+      "content": "must preserve sha256:80399b2136673ca66ff3614f8446333ad7afd54b0e9bb745029545c653071adf",
+      "visibility": "private"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "structured-5",
+      "persona_id": "structured",
+      "channel": "telegram",
+      "timestamp": "2026-08-13T12:00:23Z",
+      "local_sequence": 5,
+      "trigger_id": "outbound-15",
+      "trigger_digest": "f557653e8150a26ce665b96fd50b9e495727d7a72eefffe4f756c4ae70b8aee7",
+      "intent": "interview_response",
+      "content": "The team must keep human review on the agenda.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "structured-6",
+      "persona_id": "structured",
+      "channel": "telegram",
+      "timestamp": "2026-08-13T12:00:24Z",
+      "local_sequence": 6,
+      "trigger_id": "outbound-16",
+      "trigger_digest": "5b1032e7ff4b463618aaab6175cd1c796c00073666327eb5bafb111dc847e1db",
+      "intent": "interview_response",
+      "content": "The team can support a reviewed launch.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "structured-7",
+      "persona_id": "structured",
+      "channel": "telegram",
+      "timestamp": "2026-08-13T12:00:25Z",
+      "local_sequence": 7,
+      "trigger_id": "outbound-17",
+      "trigger_digest": "a974a5d2cb5dc39ef44b170a31af14c99a7294c6f24ff159b625887774328e45",
+      "intent": "confirm_evidence",
+      "content": "Confirmed.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "ack-2",
+      "persona_id": "ack",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:26Z",
+      "local_sequence": 2,
+      "trigger_id": "outbound-18",
+      "trigger_digest": "204fdc31d1c58a0c1f0a1dc5cc7b5c11b488cde8edeb948214dc353088b41cde",
+      "intent": "accept_proposal",
+      "content": "Accepted.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "quick-a-4",
+      "persona_id": "quick-a",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:26Z",
+      "local_sequence": 4,
+      "trigger_id": "outbound-19",
+      "trigger_digest": "204fdc31d1c58a0c1f0a1dc5cc7b5c11b488cde8edeb948214dc353088b41cde",
+      "intent": "accept_proposal",
+      "content": "Accepted.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "quick-b-4",
+      "persona_id": "quick-b",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:26Z",
+      "local_sequence": 4,
+      "trigger_id": "outbound-20",
+      "trigger_digest": "204fdc31d1c58a0c1f0a1dc5cc7b5c11b488cde8edeb948214dc353088b41cde",
+      "intent": "accept_proposal",
+      "content": "Accepted.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "structured-8",
+      "persona_id": "structured",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:26Z",
+      "local_sequence": 8,
+      "trigger_id": "outbound-21",
+      "trigger_digest": "204fdc31d1c58a0c1f0a1dc5cc7b5c11b488cde8edeb948214dc353088b41cde",
+      "intent": "change_proposal",
+      "content": "Keep human review on the agenda.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "approval-2",
+      "persona_id": "approval",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:26Z",
+      "local_sequence": 2,
+      "trigger_id": "outbound-22",
+      "trigger_digest": "204fdc31d1c58a0c1f0a1dc5cc7b5c11b488cde8edeb948214dc353088b41cde",
+      "intent": "accept_proposal",
+      "content": "Accepted.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "availability-2",
+      "persona_id": "availability",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:26Z",
+      "local_sequence": 2,
+      "trigger_id": "outbound-23",
+      "trigger_digest": "204fdc31d1c58a0c1f0a1dc5cc7b5c11b488cde8edeb948214dc353088b41cde",
+      "intent": "accept_proposal",
+      "content": "Accepted.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "ack-3",
+      "persona_id": "ack",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:27Z",
+      "local_sequence": 3,
+      "trigger_id": "outbound-24",
+      "trigger_digest": "a32aab8699b64665cba858b401d1c1a59c2d418a99328d4bfa9074555432b007",
+      "intent": "accept_proposal",
+      "content": "Accepted.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "quick-a-5",
+      "persona_id": "quick-a",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:27Z",
+      "local_sequence": 5,
+      "trigger_id": "outbound-25",
+      "trigger_digest": "a32aab8699b64665cba858b401d1c1a59c2d418a99328d4bfa9074555432b007",
+      "intent": "accept_proposal",
+      "content": "Accepted.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "quick-b-5",
+      "persona_id": "quick-b",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:27Z",
+      "local_sequence": 5,
+      "trigger_id": "outbound-26",
+      "trigger_digest": "a32aab8699b64665cba858b401d1c1a59c2d418a99328d4bfa9074555432b007",
+      "intent": "accept_proposal",
+      "content": "Accepted.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "structured-9",
+      "persona_id": "structured",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:27Z",
+      "local_sequence": 9,
+      "trigger_id": "outbound-27",
+      "trigger_digest": "a32aab8699b64665cba858b401d1c1a59c2d418a99328d4bfa9074555432b007",
+      "intent": "change_proposal",
+      "content": "Keep human review on the agenda.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "approval-3",
+      "persona_id": "approval",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:27Z",
+      "local_sequence": 3,
+      "trigger_id": "outbound-28",
+      "trigger_digest": "a32aab8699b64665cba858b401d1c1a59c2d418a99328d4bfa9074555432b007",
+      "intent": "accept_proposal",
+      "content": "Accepted.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "availability-3",
+      "persona_id": "availability",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:27Z",
+      "local_sequence": 3,
+      "trigger_id": "outbound-29",
+      "trigger_digest": "a32aab8699b64665cba858b401d1c1a59c2d418a99328d4bfa9074555432b007",
+      "intent": "accept_proposal",
+      "content": "Accepted.",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "synthetic-manager-1",
+      "persona_id": "synthetic-manager",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:28Z",
+      "local_sequence": 1,
+      "trigger_id": "outbound-31",
+      "trigger_digest": "c5243e689b7a36c03b43df4fb67cd70297cf07f19587b0dc7dc644534b9d1843",
+      "intent": "availability",
+      "content": "2026-08-13T15:00:00+00:00/2026-08-13T16:00:00+00:00",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "structured-10",
+      "persona_id": "structured",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:28Z",
+      "local_sequence": 10,
+      "trigger_id": "outbound-30",
+      "trigger_digest": "c5243e689b7a36c03b43df4fb67cd70297cf07f19587b0dc7dc644534b9d1843",
+      "intent": "availability",
+      "content": "2026-08-13T15:00:00+00:00/2026-08-13T16:00:00+00:00",
+      "visibility": "shareable"
+    },
+    {
+      "schema_version": "humanwire.synthetic/v1",
+      "action_id": "approval-change-1",
+      "persona_id": "approval-change",
+      "channel": "email",
+      "timestamp": "2026-08-13T12:00:29Z",
+      "local_sequence": 1,
+      "trigger_id": "outbound-32",
+      "trigger_digest": "d31c0f7413b2c0d19e632fba5fd2055da80b21dd1aac55a2c40bef16abd917a2",
+      "intent": "change",
+      "content": "Use the reviewed launch plan.",
+      "visibility": "shareable"
+    }
+  ],
+  "digest": "96ae18838ae4185d21a711ec401ab29ce8dc3abc2e253270eea6baf86fda8851"
+}
