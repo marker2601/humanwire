@@ -3,7 +3,434 @@ from types import SimpleNamespace
 
 import pytest
 
-from scripts.caspian_video.media import MediaPathError, build_capture_command, safe_media_path
+from scripts.caspian_video.media import (
+    MediaPathError,
+    build_capture_command,
+    build_compose_commands,
+    safe_media_path,
+)
+from scripts.caspian_video.models import ProofClass, VideoManifest
+
+
+def create_minimal_fixture_assets(manifest: VideoManifest, work_root: Path) -> None:
+    for segment in manifest.segments:
+        relative = Path(segment.source).relative_to("work/caspian-video")
+        asset = work_root / relative
+        asset.parent.mkdir(parents=True, exist_ok=True)
+        asset.write_bytes(b"fixture-media")
+
+
+def truth_safe_manifest() -> VideoManifest:
+    manifest = VideoManifest.load(
+        Path(__file__).resolve().parents[2] / "submission/caspian-video-manifest.json"
+    )
+    replacements = {
+        "telegram_authorization": "Telegram provider proof · not recorded",
+        "email_evidence": "Email provider proof · not recorded",
+    }
+    segments = tuple(
+        segment.model_copy(
+            update={
+                "proof_class": ProofClass.GENERATED_VISUAL,
+                "channel": None,
+                "disclosure": "Visual guide",
+                "required_copy": (replacements[segment.id],),
+            }
+        )
+        if segment.id in replacements
+        else segment
+        for segment in manifest.segments
+    )
+    return manifest.model_copy(update={"segments": segments})
+
+
+def test_compose_requires_every_manifest_asset(tmp_path: Path) -> None:
+    manifest = truth_safe_manifest()
+
+    with pytest.raises(MediaPathError, match="^missing approved asset$"):
+        build_compose_commands(manifest, tmp_path, tmp_path / "final.mp4")
+
+
+def test_compose_normalizes_every_segment_to_1080p_30fps(tmp_path: Path) -> None:
+    manifest = truth_safe_manifest()
+    create_minimal_fixture_assets(manifest, tmp_path)
+
+    commands = build_compose_commands(manifest, tmp_path, tmp_path / "final.mp4")
+    rendered = "\n".join(" ".join(command) for command in commands)
+
+    assert "scale=1920:1080:force_original_aspect_ratio=decrease" in rendered
+    assert "pad=1920:1080" in rendered
+    assert "fps=30" in rendered
+    assert "-c:v libx264" in rendered
+    assert "-c:a aac" in rendered
+
+
+def test_compose_refuses_to_label_missing_provider_footage_as_recorded(
+    tmp_path: Path,
+) -> None:
+    manifest = truth_safe_manifest()
+    telegram = manifest.segments[1].model_copy(
+        update={
+            "proof_class": ProofClass.RECORDED_CASPIAN,
+            "channel": "telegram",
+            "disclosure": None,
+            "required_copy": ("Recorded Caspian run · Telegram",),
+        }
+    )
+    manifest = manifest.model_copy(
+        update={"segments": (manifest.segments[0], telegram, *manifest.segments[2:])}
+    )
+    create_minimal_fixture_assets(manifest, tmp_path)
+
+    with pytest.raises(MediaPathError, match="^recorded provider proof unavailable$"):
+        build_compose_commands(manifest, tmp_path, tmp_path / "final.mp4")
+
+
+def test_compose_uses_truthful_fixed_labels(tmp_path: Path) -> None:
+    manifest = truth_safe_manifest()
+    create_minimal_fixture_assets(manifest, tmp_path)
+
+    from scripts.caspian_video.media import build_local_card_commands
+
+    compose_commands = build_compose_commands(manifest, tmp_path, tmp_path / "final.mp4")
+    card_commands = build_local_card_commands(
+        manifest, tmp_path, "https://github.com/marker2601/humanwire"
+    )
+    rendered = "\n".join(" ".join(command) for command in compose_commands + card_commands)
+    normalized = "\n".join(" ".join(command) for command in compose_commands)
+
+    assert rendered.count("Standard agents · no external messages") == 3
+    assert "Recorded Caspian run" not in rendered
+    assert "provider proof" not in normalized
+
+
+def test_tracked_manifest_composes_only_truthful_provider_fallbacks(
+    tmp_path: Path,
+) -> None:
+    manifest = VideoManifest.load(
+        Path(__file__).resolve().parents[2] / "submission/caspian-video-manifest.json"
+    )
+    create_minimal_fixture_assets(manifest, tmp_path)
+
+    from scripts.caspian_video.media import build_local_card_commands
+
+    commands = build_compose_commands(manifest, tmp_path, tmp_path / "final.mp4")
+    commands += build_local_card_commands(
+        manifest,
+        tmp_path,
+        "https://github.com/marker2601/humanwire",
+    )
+    rendered = "\n".join(" ".join(command) for command in commands)
+
+    assert "Telegram provider proof · not recorded" in rendered
+    assert "Email provider proof · not recorded" in rendered
+    assert "Recorded Caspian run" not in rendered
+
+
+def test_local_cards_disclose_missing_provider_proof_and_exact_repository(
+    tmp_path: Path,
+) -> None:
+    from scripts.caspian_video.media import build_local_card_commands
+
+    manifest = truth_safe_manifest()
+    commands = build_local_card_commands(
+        manifest,
+        tmp_path,
+        "https://github.com/marker2601/humanwire",
+    )
+    rendered = "\n".join(" ".join(command) for command in commands)
+
+    assert "Telegram provider proof · not recorded" in rendered
+    assert "Email provider proof · not recorded" in rendered
+    assert rendered.count("Standard agents · no external messages") == 3
+    assert "github.com/marker2601/humanwire" in rendered
+    assert "Recorded Caspian run" not in rendered
+
+
+def test_local_cards_rasterize_once_then_loop_the_exact_png(
+    tmp_path: Path,
+) -> None:
+    from scripts.caspian_video.media import build_local_card_commands
+
+    commands = build_local_card_commands(
+        truth_safe_manifest(),
+        tmp_path,
+        "https://github.com/marker2601/humanwire",
+    )
+    rendered = "\n".join(" ".join(command) for command in commands)
+
+    assert len(commands) == 7
+    assert rendered.count("-frames:v 1") == 4
+    assert rendered.count("-loop 1") == 3
+    assert rendered.count("-framerate 30") == 3
+    assert rendered.count("-g 1") == 3
+    assert rendered.count(".png") >= 6
+
+
+def test_public_product_truth_label_is_rasterized_once_beside_product(
+    tmp_path: Path,
+) -> None:
+    from scripts.caspian_video.media import build_local_card_commands
+
+    manifest = truth_safe_manifest()
+    create_minimal_fixture_assets(manifest, tmp_path)
+    cards = build_local_card_commands(
+        manifest, tmp_path, "https://github.com/marker2601/humanwire"
+    )
+    public_commands = build_compose_commands(
+        manifest, tmp_path, tmp_path / "final.mp4"
+    )[4:6]
+
+    assert "public-product-left-panel.png" in " ".join(cards[-1])
+    assert "color=c=0x020d1c:s=680x1080" in " ".join(cards[-1])
+    assert "black@0.0" not in " ".join(cards[-1])
+    for command in public_commands:
+        rendered = " ".join(command)
+        assert "public-product-left-panel.png" in rendered
+        assert "hstack=inputs=2" in rendered
+        assert "overlay=" not in rendered
+        assert "drawtext=" not in rendered
+
+
+def test_public_product_segments_use_readable_chronological_zoom_cutins(
+    tmp_path: Path,
+) -> None:
+    manifest = truth_safe_manifest()
+    create_minimal_fixture_assets(manifest, tmp_path)
+
+    rendered = "\n".join(
+        " ".join(command)
+        for command in build_compose_commands(manifest, tmp_path, tmp_path / "final.mp4")
+    )
+
+    assert "trim=start=0:end=8,setpts=PTS-STARTPTS,crop=960:810:1600:0" in rendered
+    assert "trim=start=8:end=16,setpts=PTS-STARTPTS,crop=960:810:1600:210" in rendered
+    assert "trim=start=16:end=24,setpts=PTS-STARTPTS,crop=960:810:1600:420" in rendered
+    assert "trim=start=24:end=32,setpts=PTS-STARTPTS,crop=960:810:1600:630" in rendered
+    assert "trim=start=0:end=10,setpts=PTS-STARTPTS,crop=960:810:1600:630" in rendered
+    assert "trim=start=10:end=20,setpts=PTS-STARTPTS,crop=960:810:1600:420" in rendered
+    assert "scale=1240:930" in rendered
+    assert "pad=1240:1080:0:150" in rendered
+    assert "concat=n=4:v=1:a=0" in rendered
+    assert "concat=n=2:v=1:a=0" in rendered
+    assert r"select='not(eq(n\,431))'" in rendered
+    assert "hstack=inputs=2" in rendered
+    assert "if(lt(t," not in rendered
+
+
+def test_ass_captions_use_explicit_canvas_and_only_authored_line_breaks(
+    tmp_path: Path,
+) -> None:
+    from scripts.caspian_video.media import build_ass_captions
+
+    srt = tmp_path / "captions.srt"
+    srt.write_text(
+        "1\n00:00:00,100 --> 00:00:01,000\nLine one, clean\nLine two\n",
+        encoding="utf-8",
+    )
+    output = tmp_path / "captions.ass"
+
+    assert build_ass_captions(truth_safe_manifest(), srt, output) == output.resolve()
+    rendered = output.read_text(encoding="utf-8")
+
+    assert "PlayResX: 1920" in rendered
+    assert "PlayResY: 1080" in rendered
+    assert "WrapStyle: 2" in rendered
+    assert "Segoe UI,32" in rendered
+    assert "Dialogue: 0,0:00:00.10,0:00:01.00" in rendered
+    assert "Line one, clean\\NLine two" in rendered
+    assert r"\," not in rendered
+
+
+def test_segment_concat_resets_timestamps_and_reencodes_video(
+    tmp_path: Path,
+) -> None:
+    manifest = truth_safe_manifest()
+    create_minimal_fixture_assets(manifest, tmp_path)
+
+    concat = build_compose_commands(manifest, tmp_path, tmp_path / "final.mp4")[-1]
+    rendered = " ".join(concat)
+
+    assert "setpts=PTS-STARTPTS" in rendered
+    assert "-c:v libx264" in rendered
+    assert "-c:v copy" not in rendered
+
+
+def test_normalized_segments_use_independent_frames_before_concat(
+    tmp_path: Path,
+) -> None:
+    manifest = truth_safe_manifest()
+    create_minimal_fixture_assets(manifest, tmp_path)
+
+    normalized = build_compose_commands(manifest, tmp_path, tmp_path / "final.mp4")[:-1]
+
+    assert normalized
+    assert all("-g" in command and command[command.index("-g") + 1] == "1" for command in normalized)
+
+
+def test_drawtext_uses_an_explicit_windows_font_without_fontconfig(
+    tmp_path: Path,
+) -> None:
+    from scripts.caspian_video.media import build_local_card_commands
+
+    manifest = truth_safe_manifest()
+    commands = build_local_card_commands(
+        manifest,
+        tmp_path,
+        "https://github.com/marker2601/humanwire",
+    )
+    rendered = "\n".join(" ".join(command) for command in commands)
+
+    assert "fontfile='C\\:/Windows/Fonts/segoeui.ttf'" in rendered
+    assert "font='Segoe UI'" not in rendered
+
+
+def test_final_command_mixes_seven_timed_narrations_and_burns_captions(
+    tmp_path: Path,
+) -> None:
+    from scripts.caspian_video.media import build_final_command
+
+    manifest = truth_safe_manifest()
+    narration_dir = tmp_path / "narration"
+    narration_dir.mkdir()
+    for index, segment in enumerate(manifest.segments):
+        (narration_dir / f"{index:02d}-{segment.id}.mp3").write_bytes(b"audio")
+    captions = tmp_path / "captions.srt"
+    captions.write_text("1\n00:00:00,000 --> 00:00:01,000\nHumanWire\n", encoding="utf-8")
+
+    command = build_final_command(
+        manifest,
+        tmp_path / "video-only.mp4",
+        captions,
+        narration_dir,
+        tmp_path / "final.mp4",
+    )
+    rendered = " ".join(command)
+
+    assert "adelay=8000|8000" in rendered
+    assert "atrim=duration=14" in rendered
+    assert "amix=inputs=8:duration=longest:normalize=0" in rendered
+    assert "subtitles=" in rendered
+    assert "-c:v libx264" in rendered
+    assert command[command.index("-g") + 1] == "1"
+    assert "-c:a aac" in rendered
+    assert "-movflags +faststart" in rendered
+    assert "-t 105" in rendered
+
+
+def test_final_encode_preserves_explicit_ass_canvas_and_safe_area(
+    tmp_path: Path,
+) -> None:
+    from scripts.caspian_video.media import build_final_command
+
+    manifest = truth_safe_manifest()
+    narration_dir = tmp_path / "narration"
+    narration_dir.mkdir()
+    for index, segment in enumerate(manifest.segments):
+        (narration_dir / f"{index:02d}-{segment.id}.mp3").write_bytes(b"audio")
+    captions = tmp_path / "captions.srt"
+    captions.write_text("1\n00:00:00,000 --> 00:00:01,000\nHumanWire\n", encoding="utf-8")
+
+    rendered = " ".join(
+        build_final_command(
+            manifest,
+            tmp_path / "video-only.mp4",
+            captions,
+            narration_dir,
+            tmp_path / "final.mp4",
+        )
+    )
+
+    assert "original_size=1920x1080" in rendered
+    assert "fontsdir='C\\:/Windows/Fonts'" in rendered
+    assert "force_style" not in rendered
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        "1\n00:00:07,500 --> 00:00:08,500\nCrosses a segment boundary\n",
+        (
+            "1\n00:00:00,000 --> 00:00:01,000\n"
+            "This subtitle line is deliberately longer than forty-two characters.\n"
+        ),
+        "1\n00:00:00,000 --> 00:00:01,000\nLine one\nLine two\nLine three\n",
+    ],
+)
+def test_caption_validation_rejects_out_of_window_or_unreadable_cues(
+    tmp_path: Path, body: str
+) -> None:
+    from scripts.caspian_video.media import validate_captions
+
+    captions = tmp_path / "captions.srt"
+    captions.write_text(body, encoding="utf-8")
+
+    with pytest.raises(MediaPathError, match="^captions invalid$"):
+        validate_captions(truth_safe_manifest(), captions)
+
+
+def test_repository_gate_uses_only_the_exact_public_url() -> None:
+    from scripts.caspian_video.media import validate_repository_url
+
+    assert (
+        validate_repository_url("https://github.com/marker2601/humanwire")
+        == "https://github.com/marker2601/humanwire"
+    )
+    with pytest.raises(MediaPathError, match="^repository URL invalid$"):
+        validate_repository_url("https://github.com/marker2601/humanwire/")
+
+
+def test_compose_cli_never_loads_video_credentials(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from scripts.caspian_video import __main__ as command_line
+
+    received: list[tuple[VideoManifest, Path, Path, Path, str, Path]] = []
+    loaded_manifest = truth_safe_manifest()
+    manifest = tmp_path / "manifest.json"
+    captions = tmp_path / "captions.srt"
+    narration_dir = tmp_path / "narration"
+    output = tmp_path / "final.mp4"
+    monkeypatch.setattr(
+        command_line,
+        "load_video_settings",
+        lambda _path: pytest.fail("credentials loaded"),
+    )
+    monkeypatch.setattr(command_line.VideoManifest, "load", lambda _path: loaded_manifest)
+    monkeypatch.setattr(
+        command_line,
+        "compose_video",
+        lambda loaded, work_root, caption_path, narration_path, repository_url, final: received.append(
+            (loaded, work_root, caption_path, narration_path, repository_url, final)
+        )
+        or final,
+    )
+
+    assert command_line.main(
+        [
+            "compose",
+            "--manifest",
+            str(manifest),
+            "--captions",
+            str(captions),
+            "--narration-dir",
+            str(narration_dir),
+            "--repository-url",
+            "https://github.com/marker2601/humanwire",
+            "--output",
+            str(output),
+        ]
+    ) == 0
+    assert received == [
+        (
+            loaded_manifest,
+            command_line.media.MEDIA_WORK_ROOT,
+            captions,
+            narration_dir,
+            "https://github.com/marker2601/humanwire",
+            output,
+        )
+    ]
 
 
 def test_capture_command_uses_argument_vector_and_ignored_root(tmp_path: Path) -> None:
